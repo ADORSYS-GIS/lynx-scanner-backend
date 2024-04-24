@@ -1,0 +1,30 @@
+name: Generate documentation for the backend
+
+on:
+    push:
+        branches:
+            - main
+jobs:
+    generate-docs:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout-Repository
+              uses: actions/checkout@v3
+
+            - name: Install asciidoctor
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y asciidoctor
+                yem install asciidoctor-pdf --pre
+
+            - name: Generate-pdf-docs
+              run: |
+                asciidoctor-pdf documentation.adoc -o documentation.pdf
+
+            - name: Upload PDF artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: documentation.pdf
+                  path: documentation.pdf
+                
+
