@@ -13,6 +13,11 @@ jobs:
         steps:
             - name: Checkout-Repository
               uses: actions/checkout@v3
+        
+            - uses: actions/setup-java@v2
+              with:
+                distribution: 'temurin'
+                java-version: '17'
 
             - name: Install asciidoctor and Asciidoctor pdf
               run: |
@@ -21,13 +26,12 @@ jobs:
                 sudo gem install asciidoctor-pdf --pre
 
             - name: Generate-pdf-docs
-              run: |
-                asciidoctor-pdf documentation.adoc -o documentation.pdf
+              run: ./gradlew asciidoctor
 
             - name: Upload PDF artifact
               uses: actions/upload-artifact@v4
               with:
                   name: documentation.pdf
-                  path: documentation.pdf
+                  path: ./docs
                 
 
