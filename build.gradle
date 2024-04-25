@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.5'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
 group = 'com.ssegning.lynx'
@@ -24,6 +25,8 @@ repositories {
 ext {
 	set('sentryVersion', "7.3.0")
 }
+def snippetsDir = file('**/*.adocs')
+
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -52,4 +55,9 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.named('asciidoctor') {
+	inputs.dir snippetsDir
+	dependsOn test
 }
