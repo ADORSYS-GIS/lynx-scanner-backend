@@ -59,6 +59,6 @@ tasks.named('test') {
 
 tasks.named('asciidoctor') {
 	inputs.files snippetsDir
-	outputs.dir files('./doc')
+	outputs.dir files('./docs')
 	dependsOn test
 }
