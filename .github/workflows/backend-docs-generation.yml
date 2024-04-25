@@ -32,6 +32,6 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                   name: documentation.pdf
-                  path: documentation.pdf
+                  path: ./build
                 
 
