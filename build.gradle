@@ -60,3 +60,7 @@ tasks.named('test') {
 task convertAdocToPdf(type: Exec) {
   commandLine '/bin/bash', 'pdf_converter.sh'  
 }
+
+task convertAdocToPdf(type: Exec){
+	commandLine '/bin/bash', 'pdf_converter.sh'
+}
