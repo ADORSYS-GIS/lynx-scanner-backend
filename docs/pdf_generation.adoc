@@ -1,18 +1,18 @@
 = PDF Documentation Generation
 == Overview
-This workflow generates PDF documentation for the backend using Asciidoctor and Asciidoctor PDF.
+ This workflow generates PDF documentation for the backend using Asciidoctor and Asciidoctor PDF.
 
 == Workflow Step
 === Checkout Repository
-Clones the repository to the workflow runner.
+    Clones the repository to the workflow runner.
 === Setup Java Environment
-Sets up Java environment with Temurin JDK version 17.
+    Sets up Java environment with Temurin JDK version 17.
 === Install Asciidoctor and Asciidoctor PDF
-Installs Asciidoctor and Asciidoctor PDF dependencies.
+    Installs Asciidoctor and Asciidoctor PDF dependencies.
 === Generate PDF Documentation
-Runs the Gradle task to generate PDF documentation using Asciidoctor.
+    Runs the Gradle task to generate PDF documentation using Asciidoctor.
 === Upload PDF Artifact
-Uploads the generated PDF file as an artifact.
+    Uploads the generated PDF file as an artifact.
 
 == How to Download the generated PDF file
 1. After the workflow completes, navigate to the "Actions" tab of your repository.
