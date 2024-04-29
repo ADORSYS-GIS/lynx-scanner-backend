@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.5'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.asciidoctor.jvm.convert' version '4.0.2'
 }
 
 group = 'com.ssegning.lynx'
@@ -43,6 +44,7 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:mongodb'
+    implementation 'org.asciidoctor:asciidoctorj-pdf:2.3.4'	
 }
 
 dependencyManagement {
@@ -53,4 +55,13 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+asciidoctor {
+    sourceDir file('./docs')
+    sources {
+        include '**/*.adoc'
+    }
+    outputDir file('./build/pdf')
+    attributes 'backends': 'pdf'
 }
