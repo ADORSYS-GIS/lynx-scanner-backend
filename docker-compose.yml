@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  keycloak:
+    image: bitnami/keycloak:latest
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: stephane
+      KEYCLOAK_ADMIN_PASSWORD: stephane
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgresql
+      DB_DATABASE: mydatabase
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+      KEYCLOAK_FLYWAY_ENABLED: "true"
+    networks:
+      - my-network
+    depends_on:
+      - postgresql
+
+  postgresql:
+    image: bitnami/postgresql:latest
+    environment:
+      POSTGRESQL_USERNAME: myuser
+      POSTGRESQL_PASSWORD: mypassword
+      POSTGRESQL_DATABASE: mydatabase
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
