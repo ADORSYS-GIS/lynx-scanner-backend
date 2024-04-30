@@ -44,7 +44,6 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:mongodb'
-    implementation 'org.asciidoctor:asciidoctorj-pdf:2.3.4'	
 }
 
 dependencyManagement {
@@ -63,5 +62,4 @@ asciidoctorPdf {
         include '**/*.adoc'
     }
     outputDir file('./build/pdf')
-    attributes 'backends': 'pdf'
 }
