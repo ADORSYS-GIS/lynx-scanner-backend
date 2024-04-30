@@ -63,6 +63,7 @@ asciidoctorPdf {
         include '**/*.adoc'
     }
     outputDir file('./build/pdf')
+}
 
 githook {
     failOnMissingHooksDir = false
