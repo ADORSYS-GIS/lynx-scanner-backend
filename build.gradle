@@ -5,6 +5,8 @@ plugins {
     id 'com.star-zero.gradle.githook' version '1.2.1'
     id 'ru.netris.commitlint' version '1.4.3'
 	id 'org.asciidoctor.jvm.pdf' version '4.0.2'
+    id("org.openapi.generator") version "5.4.0"
+
 }
 
 group = 'com.ssegning.lynx'
@@ -80,4 +82,26 @@ githook {
 
 commitlint {
     enforceRefs = false
+}
+
+openApiGenerate {
+  generatorName = 'spring'
+  inputSpec = "$rootDir/frontend/openapi.yaml"
+  outputDir = "$buildDir/generated"
+  apiPackage = 'com.ssegning.lynx.lynxbackend.api'
+  modelPackage = 'com.ssegning.lynx.lynxbackend.model'
+  invokerPackage = 'com.ssegning.lynx.lynxbackend.handler'
+  
+  configOptions = [
+    useTags: 'true',
+    library: 'spring-boot',
+    serializableModel: 'true',
+    dateLibrary: 'java8',
+    useBeanValidation: 'true',
+    performBeanValidation: 'true',
+    interfaceOnly: 'true',
+    useOptional: 'false',
+    useSpringBoot3: 'true',
+    useResponseEntity: 'false'
+  ]
 }
