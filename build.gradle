@@ -106,4 +106,4 @@ openApiGenerate {
   ]
 }
 
-tasks.named("openApiGenerate") { dependsOn("build") }
+tasks.named("build") { dependsOn("openApiGenerate") }
