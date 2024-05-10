@@ -1,3 +1,9 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.5'
@@ -6,6 +12,7 @@ plugins {
     id 'ru.netris.commitlint' version '1.4.3'
 	id 'org.asciidoctor.jvm.pdf' version '4.0.2'
     id("org.openapi.generator") version "5.4.0"
+    id "io.sentry.jvm.gradle" version "4.5.1"
 
 }
 
@@ -107,3 +114,13 @@ openApiGenerate {
 }
 
 tasks.named("build") { dependsOn("openApiGenerate") }
+
+tasks.named('processResources').configure {
+    mustRunAfter 'openApiGenerate'
+}
+sentry {
+    includeSourceContext = true
+    org = "lynx-scanner"
+    projectName = "lynx-scanner"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
+}
