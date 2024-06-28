@@ -1,12 +1,14 @@
 package com.ssegning.lynx.lynxbackend;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
+@ConditionalOnProperty(name = "spring.profiles.active", havingValue = "mongo")
 @TestConfiguration(proxyBeanMethods = false)
 public class TestLynxBackendApplication {
 

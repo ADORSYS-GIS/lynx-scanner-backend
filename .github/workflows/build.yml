@@ -1,0 +1,91 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - 'v*'
+
+  pull_request:
+    branches:
+      - '**'
+    tags-ignore:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest # Support for M1 processors
+          - windows-latest
+          - macos-13 # Support for amd64 processors
+        include:
+          - os: ubuntu-latest
+            build-artifact-name: lynx-backend
+            suffix: ubuntu-amd64
+          - os: macos-latest
+            build-artifact-name: lynx-backend
+            suffix: macos-arm64
+          - os: macos-13
+            build-artifact-name: lynx-backend
+            suffix: macos-amd64
+          - os: windows-latest
+            build-artifact-name: lynx-backend.exe
+            suffix: windows-amd64.exe
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21'      # See 'Options' section below for all supported versions
+          distribution: 'graalvm' # See 'Options' section below for all available distributions
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
+
+      - name: Run Gradle build
+        run: ./gradlew clean test nativeCompile
+
+      - name: Rename to use the platform and architecture
+        run: |
+          mkdir -p dist
+          uname -a
+          mv build/native/nativeCompile/${{ matrix.build-artifact-name }} dist/lynx-backend-${{ matrix.suffix }}
+
+      - name: Upload Native Image as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lynx-backend-${{ matrix.suffix }}
+          path: dist
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        name: Clone the repository
+      - uses: actions/download-artifact@v4
+        name: Download the build artifact
+        with:
+          merge-multiple: true
+          pattern: dist-*
+          path: dist
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/*"
+          tag: 0.0.1-SNAPSHOT
+          body: |
+            Release ${{ github.ref }}
