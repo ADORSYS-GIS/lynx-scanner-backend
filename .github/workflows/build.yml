@@ -7,37 +7,38 @@ on:
     tags-ignore:
       - 'v*'
 
-  pull_request:
-    branches:
-      - '**'
-    tags-ignore:
-      - 'v*'
-
 jobs:
   build:
-    name: Build
+    name: Building for ${{ matrix.name }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os:
           - ubuntu-latest
-          - macos-latest # Support for M1 processors
+          - macos-14
+          - macos-13
           - windows-latest
-          - macos-13 # Support for amd64 processors
         include:
           - os: ubuntu-latest
-            build-artifact-name: lynx-backend
-            suffix: ubuntu-amd64
-          - os: macos-latest
-            build-artifact-name: lynx-backend
-            suffix: macos-arm64
+            name: linux
+            suffix: ''
+            artifact-name: lynx-backend
+            arch: x64
+          - os: macos-14
+            name: macos
+            suffix: ''
+            artifact-name: lynx-backend
+            arch: arm64
           - os: macos-13
-            build-artifact-name: lynx-backend
-            suffix: macos-amd64
+            name: macos
+            suffix: ''
+            artifact-name: lynx-backend
+            arch: x64
           - os: windows-latest
-            build-artifact-name: lynx-backend.exe
-            suffix: windows-amd64.exe
-
+            name: windows
+            suffix: .exe
+            artifact-name: lynx-backend.exe
+            arch: arm64
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -51,7 +52,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Run Gradle build
         run: ./gradlew clean test nativeCompile
@@ -60,12 +61,12 @@ jobs:
         run: |
           mkdir -p dist
           uname -a
-          mv build/native/nativeCompile/${{ matrix.build-artifact-name }} dist/lynx-backend-${{ matrix.suffix }}
+          mv build/native/nativeCompile/${{ matrix.artifact-name }} dist/lynx-backend-${{ matrix.name }}-${{ matrix.arch }}${{ matrix.suffix }}
 
       - name: Upload Native Image as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lynx-backend-${{ matrix.suffix }}
+          name: lynx-backend-${{ matrix.name }}-${{ matrix.arch }}${{ matrix.suffix }}
           path: dist
 
   release:

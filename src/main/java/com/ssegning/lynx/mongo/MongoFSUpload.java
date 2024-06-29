@@ -1,8 +1,8 @@
-package com.ssegning.lynx.lynxbackend.service;
+package com.ssegning.lynx.mongo;
 
 import com.ssegning.lynx.lynxbackend.exceptions.StorageFileNotFoundException;
+import com.ssegning.lynx.lynxbackend.service.FileUpload;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,6 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 import static org.springframework.data.mongodb.gridfs.GridFsCriteria.whereFilename;
 
 @Service
-@ConditionalOnProperty(name = "spring.profiles.active", havingValue = "mongo")
 @RequiredArgsConstructor
 public class MongoFSUpload implements FileUpload {
 

@@ -4,7 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.4'
     id 'com.star-zero.gradle.githook' version '1.2.1'
     id 'ru.netris.commitlint' version '1.4.3'
-	id 'org.asciidoctor.jvm.pdf' version '4.0.2'
+    id 'org.asciidoctor.jvm.pdf' version '4.0.2'
     id("org.openapi.generator") version "6.6.0"
     id("org.graalvm.buildtools.native") version "0.10.2"
 }
@@ -56,10 +56,12 @@ dependencyManagement {
     }
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
 
-    exclude 'com/ssegning/**/*GridFs*'
+    if (!project.hasProperty('spring.profiles.active') || project.property('spring.profiles.active') == 'local') {
+        exclude 'com/ssegning/lynx/mongo/**/*'
+    }
 }
 
 asciidoctorPdf {
@@ -87,27 +89,27 @@ commitlint {
 }
 
 openApiGenerate {
-  generatorName = 'spring'
-  inputSpec = "$rootDir/frontend/openapi.yaml"
-  outputDir = "${layout.buildDirectory.get()}/generated/openapi"
-  apiPackage = 'com.ssegning.lynx.lynxbackend.api'
-  modelPackage = 'com.ssegning.lynx.lynxbackend.model'
-  invokerPackage = 'com.ssegning.lynx.lynxbackend.handler'
+    generatorName = 'spring'
+    inputSpec = "$rootDir/frontend/openapi.yaml"
+    outputDir = "${layout.buildDirectory.get()}/generated/openapi"
+    apiPackage = 'com.ssegning.lynx.lynxbackend.api'
+    modelPackage = 'com.ssegning.lynx.lynxbackend.model'
+    invokerPackage = 'com.ssegning.lynx.lynxbackend.handler'
 
-  configOptions = [
-    useTags: 'true',
-    library: 'spring-boot',
-    serializableModel: 'true',
-    dateLibrary: 'java8',
-    useBeanValidation: 'true',
-    performBeanValidation: 'true',
-    interfaceOnly: 'true',
-    useOptional: 'false',
-    useSpringBoot3: 'true',
-    useResponseEntity: 'false',
-    openApiNullable: 'false',
-    useSwaggerUI: 'false'
-  ]
+    configOptions = [
+            useTags              : 'true',
+            library              : 'spring-boot',
+            serializableModel    : 'true',
+            dateLibrary          : 'java8',
+            useBeanValidation    : 'true',
+            performBeanValidation: 'true',
+            interfaceOnly        : 'true',
+            useOptional          : 'false',
+            useSpringBoot3       : 'true',
+            useResponseEntity    : 'false',
+            openApiNullable      : 'false',
+            useSwaggerUI         : 'false'
+    ]
 }
 
 sourceSets {
@@ -118,30 +120,36 @@ sourceSets {
     }
 }
 
-tasks.named("compileJava") {
+compileJava {
     dependsOn("openApiGenerate")
 }
 
-tasks.named("build") {
+build {
     dependsOn("openApiGenerate")
 }
 
-tasks.named("bootJar") {
+bootJar {
     dependsOn("openApiGenerate")
 }
 
-tasks.named("compileAotJava") {
+compileAotJava {
     dependsOn("openApiGenerate")
 }
 
-tasks.named("processAotResources") {
+processAotResources {
     dependsOn("openApiGenerate")
 }
 
-tasks.named("compileAotTestJava") {
+compileAotTestJava {
     dependsOn("openApiGenerate")
 }
 
-tasks.named("processAotTestResources") {
+processAotTestResources {
     dependsOn("openApiGenerate")
+}
+
+processTestResources {
+    if (!project.hasProperty('spring.profiles.active') || project.property('spring.profiles.active') == 'local') {
+        exclude 'com/ssegning/lynx/mongo/**/*'
+    }
 }

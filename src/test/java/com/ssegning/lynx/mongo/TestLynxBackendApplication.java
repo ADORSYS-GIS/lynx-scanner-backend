@@ -1,5 +1,6 @@
-package com.ssegning.lynx.lynxbackend;
+package com.ssegning.lynx.mongo;
 
+import com.ssegning.lynx.lynxbackend.LynxBackendApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.TestConfiguration;

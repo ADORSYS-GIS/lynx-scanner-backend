@@ -1,10 +1,10 @@
-package com.ssegning.lynx.lynxbackend.service;
+package com.ssegning.lynx.local;
 
 import com.ssegning.lynx.lynxbackend.exceptions.StorageException;
 import com.ssegning.lynx.lynxbackend.exceptions.StorageFileNotFoundException;
+import com.ssegning.lynx.lynxbackend.service.FileUpload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
 @Service
-@ConditionalOnProperty(name = "spring.profiles.active", havingValue = "local")
 @RequiredArgsConstructor
 public class LocalFSUpload implements FileUpload {
 
