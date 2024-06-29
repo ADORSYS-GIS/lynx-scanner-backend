@@ -1,19 +1,19 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.5'
+    id 'org.springframework.boot' version '3.3.0'
     id 'io.spring.dependency-management' version '1.1.4'
     id 'com.star-zero.gradle.githook' version '1.2.1'
     id 'ru.netris.commitlint' version '1.4.3'
-	id 'org.asciidoctor.jvm.pdf' version '4.0.2'
-    id("org.openapi.generator") version "5.4.0"
-
+    id 'org.asciidoctor.jvm.pdf' version '4.0.2'
+    id("org.openapi.generator") version "6.6.0"
+    id("org.graalvm.buildtools.native") version "0.10.2"
 }
 
 group = 'com.ssegning.lynx'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = '21'
 }
 
 configurations {
@@ -56,8 +56,12 @@ dependencyManagement {
     }
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
+
+    if (!project.hasProperty('spring.profiles.active') || project.property('spring.profiles.active') == 'local') {
+        exclude 'com/ssegning/lynx/mongo/**/*'
+    }
 }
 
 asciidoctorPdf {
@@ -85,25 +89,67 @@ commitlint {
 }
 
 openApiGenerate {
-  generatorName = 'spring'
-  inputSpec = "$rootDir/frontend/openapi.yaml"
-  outputDir = "$buildDir/generated"
-  apiPackage = 'com.ssegning.lynx.lynxbackend.api'
-  modelPackage = 'com.ssegning.lynx.lynxbackend.model'
-  invokerPackage = 'com.ssegning.lynx.lynxbackend.handler'
-  
-  configOptions = [
-    useTags: 'true',
-    library: 'spring-boot',
-    serializableModel: 'true',
-    dateLibrary: 'java8',
-    useBeanValidation: 'true',
-    performBeanValidation: 'true',
-    interfaceOnly: 'true',
-    useOptional: 'false',
-    useSpringBoot3: 'true',
-    useResponseEntity: 'false'
-  ]
+    generatorName = 'spring'
+    inputSpec = "$rootDir/frontend/openapi.yaml"
+    outputDir = "${layout.buildDirectory.get()}/generated/openapi"
+    apiPackage = 'com.ssegning.lynx.lynxbackend.api'
+    modelPackage = 'com.ssegning.lynx.lynxbackend.model'
+    invokerPackage = 'com.ssegning.lynx.lynxbackend.handler'
+
+    configOptions = [
+            useTags              : 'true',
+            library              : 'spring-boot',
+            serializableModel    : 'true',
+            dateLibrary          : 'java8',
+            useBeanValidation    : 'true',
+            performBeanValidation: 'true',
+            interfaceOnly        : 'true',
+            useOptional          : 'false',
+            useSpringBoot3       : 'true',
+            useResponseEntity    : 'false',
+            openApiNullable      : 'false',
+            useSwaggerUI         : 'false'
+    ]
 }
 
-tasks.named("build") { dependsOn("openApiGenerate") }
+sourceSets {
+    main {
+        java {
+            srcDir("$buildDir/generated/openapi/src/main/java")
+        }
+    }
+}
+
+compileJava {
+    dependsOn("openApiGenerate")
+}
+
+build {
+    dependsOn("openApiGenerate")
+}
+
+bootJar {
+    dependsOn("openApiGenerate")
+}
+
+compileAotJava {
+    dependsOn("openApiGenerate")
+}
+
+processAotResources {
+    dependsOn("openApiGenerate")
+}
+
+compileAotTestJava {
+    dependsOn("openApiGenerate")
+}
+
+processAotTestResources {
+    dependsOn("openApiGenerate")
+}
+
+processTestResources {
+    if (!project.hasProperty('spring.profiles.active') || project.property('spring.profiles.active') == 'local') {
+        exclude 'com/ssegning/lynx/mongo/**/*'
+    }
+}
