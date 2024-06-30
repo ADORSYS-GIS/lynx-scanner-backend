@@ -38,7 +38,7 @@ jobs:
             name: windows
             suffix: .exe
             artifact-name: lynx-backend.exe
-            arch: arm64
+            arch: x64
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -82,7 +82,7 @@ jobs:
         name: Download the build artifact
         with:
           merge-multiple: true
-          pattern: dist-*
+          pattern: lynx-backend-*
           path: dist
       - uses: ncipollo/release-action@v1
         with:
