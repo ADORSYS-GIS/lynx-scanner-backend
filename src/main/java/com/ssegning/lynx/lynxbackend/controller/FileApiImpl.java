@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
@@ -20,9 +22,13 @@ public class FileApiImpl implements FileApi {
         return fileUpload.downloadFile(fileId);
     }
 
-    // TODO
     @Override
     public FileUploadResponse uploadFile(MultipartFile file) {
-        return FileApi.super.uploadFile(file);
+        try {
+            var fileId = fileUpload.uploadFile(file);
+            return new FileUploadResponse().fileId(fileId);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static org.springframework.data.mongodb.gridfs.GridFsCriteria.whereFilename;
+import static org.springframework.data.mongodb.gridfs.GridFsCriteria.where;
 
 @Service
 @RequiredArgsConstructor
@@ -20,18 +21,20 @@ public class MongoFSUpload implements FileUpload {
     private final GridFsTemplate gridFsTemplate;
 
     @Override
-    public void uploadFile(String fileName, MultipartFile file) throws IOException {
-        gridFsTemplate.store(file.getInputStream(), fileName, file.getContentType());
+    public String uploadFile(MultipartFile file) throws IOException {
+        var fileName = file.getOriginalFilename();
+        var fileId = gridFsTemplate.store(file.getInputStream(), fileName, file.getContentType());
+        return fileId.toHexString();
     }
 
     @Override
-    public Resource downloadFile(String fileName) {
-        var one = gridFsTemplate.findOne(query(whereFilename().is(fileName)));
-        if (one == null) {
-            throw new StorageFileNotFoundException("Could not read file: " + fileName);
+    public Resource downloadFile(String fileId) {
+        var file = gridFsTemplate.findOne(query(where("_id").is(fileId)));
+        if (file == null) {
+            throw new StorageFileNotFoundException("File not found");
         }
 
-        return gridFsTemplate.getResource(one);
+        return gridFsTemplate.getResource(file);
     }
 
     @Override

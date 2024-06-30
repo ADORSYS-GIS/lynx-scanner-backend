@@ -27,22 +27,31 @@ public class LocalFSUpload implements FileUpload {
     private Path rootLocation;
 
     @Override
-    public void uploadFile(String fileName, MultipartFile file) throws IOException {
+    public String uploadFile(MultipartFile file) throws IOException {
+        final var fileNameCleaned = Objects.requireNonNull(file.getOriginalFilename()).replaceAll("\\s", "_");
+        final var randomName = "file_%s_%s".formatted(System.currentTimeMillis(), fileNameCleaned);
+
         if (file.isEmpty()) {
             throw new StorageException("Failed to store empty file.");
         }
-        var destinationFile = this.rootLocation.resolve(
-                        Paths.get(Objects.requireNonNull(file.getOriginalFilename())))
-                .normalize().toAbsolutePath();
+
+        var destinationFile = this.rootLocation
+                .resolve(Paths.get(randomName))
+                .normalize()
+                .toAbsolutePath();
+
         if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
-            // This is a security check
-            throw new StorageException(
-                    "Cannot store file outside current directory.");
+            throw new StorageException("Cannot store file outside current directory.");
         }
-        try (var inputStream = file.getInputStream()) {
-            Files.copy(inputStream, destinationFile,
-                    StandardCopyOption.REPLACE_EXISTING);
+
+        // Parent should be created before writing the file
+        Files.createDirectories(destinationFile.getParent());
+
+        try (final var inputStream = file.getInputStream()) {
+            Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
         }
+
+        return randomName;
     }
 
     @Override
