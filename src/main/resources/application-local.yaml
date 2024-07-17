@@ -127,6 +127,12 @@ spring:
       - org.springframework.boot.actuate.autoconfigure.web.reactive.ReactiveManagementContextAutoConfiguration
       - org.springframework.boot.actuate.autoconfigure.web.server.ManagementContextAutoConfiguration
       - org.springframework.boot.actuate.autoconfigure.web.servlet.ServletManagementContextAutoConfiguration
+  jpa:
+    database: h2
+    generate-ddl: true
+    open-in-view: false
+  datasource:
+    url: jdbc:h2:file:./tmp/h2db
 
 file:
   upload-dir: ./tmp

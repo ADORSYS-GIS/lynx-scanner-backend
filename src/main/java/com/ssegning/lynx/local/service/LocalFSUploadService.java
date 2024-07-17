@@ -1,4 +1,4 @@
-package com.ssegning.lynx.local;
+package com.ssegning.lynx.local.service;
 
 import com.ssegning.lynx.lynxbackend.exceptions.StorageException;
 import com.ssegning.lynx.lynxbackend.exceptions.StorageFileNotFoundException;
@@ -21,7 +21,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class LocalFSUpload implements FileUpload {
+public class LocalFSUploadService implements FileUpload {
 
     @Value("${file.upload-dir}")
     private Path rootLocation;
