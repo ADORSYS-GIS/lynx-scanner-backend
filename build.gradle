@@ -10,7 +10,7 @@ plugins {
 }
 
 group = 'com.ssegning.lynx'
-version = '0.1.0'
+version = '0.1.1'
 
 java {
     sourceCompatibility = '21'

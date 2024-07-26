@@ -4,6 +4,7 @@ import com.ssegning.lynx.lynxbackend.api.ScanApi;
 import com.ssegning.lynx.lynxbackend.model.Scan;
 import com.ssegning.lynx.lynxbackend.service.ScanService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
